@@ -1,0 +1,783 @@
+package com.sample.rules
+
+import org.kie.api.runtime.KieRuntime;
+import org.kie.api.runtime.rule.FactHandle;
+
+import com.sample.QuizWindow;
+import javax.swing.JOptionPane;
+
+///////////////////////////////////////////////////////////
+
+declare enum Questions
+    PEOPLE("Are You a people person?"),
+    MONEY("Do You want to make money at this?"),
+    FEDORA("Do You own photo vest, fedora or light meter?"),
+    LOVE("Ever fallen in love?"),
+    VOYEUR("Are You a voyeur?"),
+    BLOG("Favourite blog?"),
+    GEAR("Gear aquisition syndrome?"),
+    PRUDISH("Prudish?"),
+    ACTIVIST("Bleeding Heart Activist?"),
+    ADAMS("Favourite Adams?"),
+    MFA("MFA?"),
+    AGORA("Agoraphobe?"),
+    CONTROL("Are You a control freak?"),
+    BFA("BFA?"),
+    ADRENALINE("Adrenaline junkie?"),
+    REFLEX("Do You have quick reflexes?"),
+    CHILDHOOD("Unresolved childhood issues?"),
+    NOSTALGIA("Weakness for nostalgia?"),
+    JOURNEY("Do You believe the journey is the destination?"),
+    FETISH("Alt-process fetish?"),
+    STONE("What's your Birth Stone?"),
+    PAINTER("Were You a painter at one point?"),
+    INSTITUTIONS("Do You trust institutions?"),
+    OCD("OCD tendencies?"),
+    GRANDUER("Granduer oriented?"),
+    CAMERA("Have You ever operated a camera?"),
+    SUPERFRIEND("Your favourite Superfriend?"),
+    BELLYBUTTON("Bellybutton morphology?");
+    
+    content: String
+end
+
+declare Options
+	content: String[]
+end
+
+declare Answer
+	content: String
+end
+
+declare Question
+    question: Questions
+    options: Options
+    answer: Answer
+end
+
+declare Style
+	content: String
+end
+
+////////////////////////////////////////////////////
+
+global QuizWindow window
+
+////////////////////////////////////////////////////
+
+rule "Init"
+    when
+    then
+        Question start = new Question(Questions.PEOPLE, new Options(new String[]{"Yes", "No"}), null);
+        insert(start);
+end
+
+rule "Q.People"
+when
+	q: Question(question == Questions.PEOPLE, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.People.Y"
+when
+	Question(question == Questions.PEOPLE, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.MONEY, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "A.People.N"
+when
+	Question(question == Questions.PEOPLE, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.FEDORA, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Money"
+when
+	q: Question(question == Questions.MONEY, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Money.Y"
+when
+	Question(question == Questions.MONEY, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.LOVE, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "A.Money.N"
+when
+	Question(question == Questions.MONEY, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.VOYEUR, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Fedora"
+when
+	q: Question(question == Questions.FEDORA, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Fedora.Y"
+when
+	Question(question == Questions.FEDORA, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.BLOG, new Options(new String[]{"T.O.P.", "Lenscratch", "Conscientious"}), null);
+    insert(q);
+end
+
+rule "A.Fedora.N"
+when
+	Question(question == Questions.FEDORA, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.GEAR, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Love"
+when
+	q: Question(question == Questions.LOVE, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Love.Y"
+when
+	Question(question == Questions.LOVE, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.PRUDISH, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "A.Love.N"
+when
+	Question(question == Questions.LOVE, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.ACTIVIST, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Voyeur"
+when
+	q: Question(question == Questions.VOYEUR, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Voyeur.Y"
+when
+	Question(question == Questions.VOYEUR, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.AGORA, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "A.Voyeur.N"
+when
+	Question(question == Questions.VOYEUR, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.CONTROL, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Blog"
+when
+	q: Question(question == Questions.BLOG, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Blog.T"
+when
+	Question(question == Questions.BLOG, answer != null, answer.content == "T.O.P.")
+then
+	Question q = new Question(Questions.ADAMS, new Options(new String[]{"Ansel", "Robert"}), null);
+    insert(q);
+end
+
+rule "A.Blog.L"
+when
+	Question(question == Questions.BLOG, answer != null, answer.content == "Lenscratch")
+then
+	Style s = new Style("RUIN PORN");
+    insert(s);
+end
+
+rule "A.Blog.C"
+when
+	Question(question == Questions.BLOG, answer != null, answer.content == "Conscientious")
+then
+	Style s = new Style("PHOTOS MADE WITH SOMETHING AT STAKE");
+    insert(s);
+end
+
+rule "Q.Gear"
+when
+	q: Question(question == Questions.GEAR, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Gear.Y"
+when
+	Question(question == Questions.GEAR, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("TEST PRINTS DEMONSTRATING LATEST PURCHASE");
+    insert(s);
+end
+
+rule "A.Gear.N"
+when
+	Question(question == Questions.GEAR, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.MFA, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Prudish"
+when
+	q: Question(question == Questions.PRUDISH, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Prudish.Y"
+when
+	Question(question == Questions.PRUDISH, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("WEDDINGS");
+    insert(s);
+end
+
+rule "A.Prudish.N"
+when
+	Question(question == Questions.PRUDISH, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.BFA, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Activist"
+when
+	q: Question(question == Questions.ACTIVIST, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Activist.Y"
+when
+	Question(question == Questions.ACTIVIST, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.ADRENALINE, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "A.Activist.N"
+when
+	Question(question == Questions.ACTIVIST, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.REFLEX, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Adams"
+when
+	q: Question(question == Questions.ADAMS, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Adams.A"
+when
+	Question(question == Questions.ADAMS, answer != null, answer.content == "Ansel")
+then
+	Style s = new Style("f/64 REDUX");
+    insert(s);
+end
+
+rule "A.Adams.R"
+when
+	Question(question == Questions.ADAMS, answer != null, answer.content == "Robert")
+then
+	Style s = new Style("NEO NEW TOPOGRAPHICS");
+    insert(s);
+end
+
+rule "Q.MFA"
+when
+	q: Question(question == Questions.MFA, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.MFA.Y"
+when
+	Question(question == Questions.MFA, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.CHILDHOOD, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "A.MFA.N"
+when
+	Question(question == Questions.MFA, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.NOSTALGIA, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Agora"
+when
+	q: Question(question == Questions.AGORA, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Agora.Y"
+when
+	Question(question == Questions.AGORA, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("GSV STREET PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Agora.N"
+when
+	Question(question == Questions.AGORA, answer != null, answer.content == "No")
+then
+	Style s = new Style("STREET PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "Q.Control"
+when
+	q: Question(question == Questions.CONTROL, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Control.Y"
+when
+	Question(question == Questions.CONTROL, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("FINE ART PORTRAITS");
+    insert(s);
+end
+
+rule "A.Control.N"
+when
+	Question(question == Questions.CONTROL, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.JOURNEY, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.BFA"
+when
+	q: Question(question == Questions.BFA, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.BFA.Y"
+when
+	Question(question == Questions.BFA, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("EROTICA");
+    insert(s);
+end
+
+rule "A.BFA.N"
+when
+	Question(question == Questions.BFA, answer != null, answer.content == "No")
+then
+	Style s = new Style("PORN");
+    insert(s);
+end
+
+rule "Q.Adrenaline"
+when
+	q: Question(question == Questions.ADRENALINE, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Adrenaline.Y"
+when
+	Question(question == Questions.ADRENALINE, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("WAR PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Adrenaline.N"
+when
+	Question(question == Questions.ADRENALINE, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.FETISH, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Reflex"
+when
+	q: Question(question == Questions.REFLEX, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Reflex.Y"
+when
+	Question(question == Questions.REFLEX, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("SPORTS PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Reflex.N"
+when
+	Question(question == Questions.REFLEX, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.STONE, new Options(new String[]{"I. F. Stone", "Rolling Stone", "Stone Philips", "Bloodstone"}), null);
+    insert(q);
+end
+
+rule "Q.Childhood"
+when
+	q: Question(question == Questions.CHILDHOOD, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Childhood.Y"
+when
+	Question(question == Questions.CHILDHOOD, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("DOMESTIC SCENES");
+    insert(s);
+end
+
+rule "A.Childhood.N"
+when
+	Question(question == Questions.CHILDHOOD, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.PAINTER, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Nostalgia"
+when
+	q: Question(question == Questions.NOSTALGIA, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Nostalgia.Y"
+when
+	Question(question == Questions.NOSTALGIA, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("CARDS AND CALENDARS");
+    insert(s);
+end
+
+rule "A.Nostalgia.N"
+when
+	Question(question == Questions.NOSTALGIA, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.INSTITUTIONS, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Journey"
+when
+	q: Question(question == Questions.JOURNEY, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Journey.Y"
+when
+	Question(question == Questions.JOURNEY, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("TINTYPE PORTRAITS");
+    insert(s);
+end
+
+rule "A.Journey.N"
+when
+	Question(question == Questions.JOURNEY, answer != null, answer.content == "No")
+then
+	Style s = new Style("ENVIRONMENTAL PORTRAITS");
+    insert(s);
+end
+
+rule "Q.Fetish"
+when
+	q: Question(question == Questions.FETISH, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Fetish.Y"
+when
+	Question(question == Questions.FETISH, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("B & W / SEPIA POVERTY PORN");
+    insert(s);
+end
+
+rule "A.Fetish.N"
+when
+	Question(question == Questions.FETISH, answer != null, answer.content == "No")
+then
+	Style s = new Style("SOCIAL DOCUMENTARY");
+    insert(s);
+end
+
+rule "Q.Stone"
+when
+	q: Question(question == Questions.STONE, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Stone.I.F."
+when
+	Question(question == Questions.STONE, answer != null, answer.content == "I. F. Stone")
+then
+	Style s = new Style("PHOTOJOURNALISM");
+    insert(s);
+end
+
+rule "A.Stone.R"
+when
+	Question(question == Questions.STONE, answer != null, answer.content == "Rolling Stone")
+then
+	Style s = new Style("MUSIC / CONCERT PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Stone.P"
+when
+	Question(question == Questions.STONE, answer != null, answer.content == "Stone Philips")
+then
+	Style s = new Style("STOCK PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Stone.B"
+when
+	Question(question == Questions.STONE, answer != null, answer.content == "Bloodstone")
+then
+	Style s = new Style("COMMERCIAL / ADVERTISING");
+    insert(s);
+end
+
+rule "Q.Painter"
+when
+	q: Question(question == Questions.PAINTER, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Painter.Y"
+when
+	Question(question == Questions.PAINTER, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("ABSTRACT EXPRESSIONISM");
+    insert(s);
+end
+
+rule "A.Painter.N"
+when
+	Question(question == Questions.PAINTER, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.OCD, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Institutions"
+when
+	q: Question(question == Questions.INSTITUTIONS, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Institutions.Y"
+when
+	Question(question == Questions.INSTITUTIONS, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("ARCHITECTURAL PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Institutions.N"
+when
+	Question(question == Questions.INSTITUTIONS, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.GRANDUER, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.OCD"
+when
+	q: Question(question == Questions.OCD, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.OCD.Y"
+when
+	Question(question == Questions.OCD, answer != null, answer.content == "Yes")
+then
+	Style s = new Style("TYPOLOGIES");
+    insert(s);
+end
+
+rule "A.OCD.N"
+when
+	Question(question == Questions.OCD, answer != null, answer.content == "No")
+then
+	Question q = new Question(Questions.CAMERA, new Options(new String[]{"Yes", "No"}), null);
+    insert(q);
+end
+
+rule "Q.Granduer"
+when
+	q: Question(question == Questions.GRANDUER, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Granduer.Y"
+when
+	Question(question == Questions.GRANDUER, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.SUPERFRIEND, new Options(new String[]{"Batman", "Aquaman", "Wonder Woman"}), null);
+    insert(q);
+end
+
+rule "A.Granduer.N"
+when
+	Question(question == Questions.GRANDUER, answer != null, answer.content == "No")
+then
+	Style s = new Style("SURVEILLANCE / FORENSICS");
+    insert(s);
+end
+
+rule "Q.Camera"
+when
+	q: Question(question == Questions.CAMERA, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Camera.Y"
+when
+	Question(question == Questions.CAMERA, answer != null, answer.content == "Yes")
+then
+	Question q = new Question(Questions.BELLYBUTTON, new Options(new String[]{"Innie", "Outie"}), null);
+    insert(q);
+end
+
+rule "A.Camera.N"
+when
+	Question(question == Questions.CAMERA, answer != null, answer.content == "No")
+then
+	Style s = new Style("APPROPRIATED PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "Q.Superfriend"
+when
+	q: Question(question == Questions.SUPERFRIEND, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Superfriend.B"
+when
+	Question(question == Questions.SUPERFRIEND, answer != null, answer.content == "Batman")
+then
+	Style s = new Style("NIGHT PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Camera.A"
+when
+	Question(question == Questions.SUPERFRIEND, answer != null, answer.content == "Aquaman")
+then
+	Style s = new Style("UNDERWATER PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Camera.W"
+when
+	Question(question == Questions.SUPERFRIEND, answer != null, answer.content == "Wonder Woman")
+then
+	Style s = new Style("AERIAL PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "Q.Bellybutton"
+when
+	q: Question(question == Questions.BELLYBUTTON, answer == null)
+then
+	ask_question(window, kcontext.getKieRuntime(), q);
+end
+
+rule "A.Bellybutton.I"
+when
+	Question(question == Questions.BELLYBUTTON, answer != null, answer.content == "Innie")
+then
+	Style s = new Style("PHOTOS ABOUT PHOTOGRAPHY");
+    insert(s);
+end
+
+rule "A.Bellybutton.O"
+when
+	Question(question == Questions.BELLYBUTTON, answer != null, answer.content == "Outie")
+then
+	Style s = new Style("SOCIAL LANDSCAPES ON MEDIUM FORMAT COLOR FILM");
+    insert(s);
+end
+
+rule "Display style"
+when
+	s: Style()
+then
+	show_style(window, kcontext.getKieRuntime(), s);
+end
+
+////////////////////////////////////////////////////
+
+function void ask_question(QuizWindow window, KieRuntime rt, Question question) {
+	FactHandle handle = rt.getFactHandle(question);
+    int selected = JOptionPane.showOptionDialog(
+                window,
+                question.getQuestion().getContent(),
+                "",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                question.getOptions().getContent(),
+                question.getOptions().getContent()[0]);
+                
+    Answer answer = new Answer(question.getOptions().getContent()[selected]);
+    question.setAnswer(answer);
+    rt.update(handle, question);
+}
+
+function void show_style(QuizWindow window, KieRuntime rt, Style style) {
+	JOptionPane.showMessageDialog(
+                window,
+                style.getContent(),
+                "Your style is...",
+                JOptionPane.DEFAULT_OPTION);
+}
